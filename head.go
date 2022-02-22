@@ -13,7 +13,7 @@ const REF_PREFIX = "ref:"
 // `ref` can be a branch name or a commit hash
 func (lit *Lit) SetRef(ref string) error {
 
-	rootDir, err := lit.Root()
+	rootDir, err := lit.LitDir()
 
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func (lit *Lit) SetRef(ref string) error {
 // from the HEAD file
 func (lit *Lit) GetRef() (string, error) {
 
-	rootDir, err := lit.Root()
+	rootDir, err := lit.LitDir()
 
 	if err != nil {
 		return "", err

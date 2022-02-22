@@ -13,6 +13,7 @@ type Lit struct {
 type LitConfig struct {
 	DefaultBranchName string
 	HeadPath          string
+	IgnoreFileName    string
 	RootDir           string
 }
 
@@ -26,13 +27,28 @@ func NewLit() *Lit {
 		&LitConfig{
 			DefaultBranchName: "master",
 			HeadPath:          "HEAD",
+			IgnoreFileName:    ".litignore",
 			RootDir:           ".lit",
 		},
 	}
 }
 
-// Root finds the closest root folder from the CWD
+// Root finds the closest parent of the lit directory (.lit)
+// from the CWD
 func (lit *Lit) Root() (string, error) {
+
+	litDir, err := lit.LitDir()
+
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Dir(litDir), nil
+}
+
+// LitDir finds the closest lit directory (.lit) from the CWD
+func (lit *Lit) LitDir() (string, error) {
+
 	cwd, err := os.Getwd()
 
 	if err != nil {
