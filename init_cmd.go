@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -18,7 +19,9 @@ func (lit *Lit) Init() {
 		return
 	}
 
-	mustMakeDirs(root)
+	if err := os.MkdirAll(root, 0644); err != nil {
+		log.Fatal(err)
+	}
 
 	err = lit.SetRef(lit.DefaultBranchName)
 
