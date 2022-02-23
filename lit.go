@@ -8,6 +8,7 @@ import (
 
 type Lit struct {
 	*LitConfig
+	logger Logger
 }
 
 type LitConfig struct {
@@ -17,11 +18,19 @@ type LitConfig struct {
 	RootDir           string
 }
 
+type Logger interface {
+	Debug(v ...interface{})
+	Info(v ...interface{})
+	Warn(v ...interface{})
+	Error(v ...interface{})
+	Fatal(v ...interface{})
+}
+
 var (
 	RepositoryNotInitialized = errors.New("fatal: not a lit repository (or any of the parent directories)")
 )
 
-func NewLit() *Lit {
+func NewLit(logger Logger) *Lit {
 
 	return &Lit{
 		&LitConfig{
@@ -30,6 +39,7 @@ func NewLit() *Lit {
 			IgnoreFileName:    ".litignore",
 			RootDir:           ".lit",
 		},
+		logger,
 	}
 }
 

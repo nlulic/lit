@@ -1,10 +1,16 @@
 package main
 
-import "os"
+import (
+	"os"
+
+	"gitlab.com/nlulic/lit/logger"
+)
 
 func main() {
 
-	lit := NewLit()
+	lit := NewLit(
+		logger.New(logger.LevelDebug),
+	)
 
 	// TODO:
 	if len(os.Args) < 2 {
