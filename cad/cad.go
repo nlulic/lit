@@ -11,7 +11,7 @@ type Cad struct {
 	basePath string
 }
 
-func NewCad(basePath string) *Cad {
+func New(basePath string) *Cad {
 	return &Cad{basePath}
 }
 
