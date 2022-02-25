@@ -3,7 +3,6 @@
 package objects
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 
@@ -67,10 +66,4 @@ func (t *Tree) Hash() string {
 // getName returns the name of the Tree to implement the object interface
 func (t Tree) getName() string {
 	return t.Name
-}
-
-// TODO: Remove
-func (t *Tree) Print() {
-	s, _ := json.MarshalIndent(t, "", "\t")
-	fmt.Printf("%s\n", string(s))
 }
