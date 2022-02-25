@@ -19,25 +19,26 @@ func TestRW(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	tests := []struct {
-		name string
-		path string
-		text string
-		want []byte
+		name    string
+		objtype string
+		path    string
+		text    string
+		want    []byte
 	}{
 		{
-			name: "Create File",
-			path: "foo/bar",
-			text: "de07f660-02d5-46be-b79e-020f909acedc",
-			want: []byte("de07f660-02d5-46be-b79e-020f909acedc"),
+			name:    "Create File",
+			objtype: "blob",
+			text:    "de07f660-02d5-46be-b79e-020f909acedc",
+			want:    []byte("blob 36\x00de07f660-02d5-46be-b79e-020f909acedc"), // header with text
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			cad := NewCad(tempDir)
+			cad := New(tempDir)
 
-			err := cad.Write([]byte(tt.text), tt.path)
+			createdHash, err := cad.Write([]byte(tt.text), tt.objtype)
 			if err != nil {
 				t.Error(err)
 			}
@@ -47,9 +48,9 @@ func TestRW(t *testing.T) {
 				t.Error(err)
 			}
 
-			b, err := cad.Read(tt.path)
+			b, err := cad.Read(relativePath(createdHash))
 			if err != nil {
-				t.Error(err)
+				t.Error(err, Hash([]byte(tt.text), tt.objtype))
 			}
 
 			if !bytes.Equal(tt.want, b) {

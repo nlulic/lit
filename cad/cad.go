@@ -15,32 +15,33 @@ func New(basePath string) *Cad {
 	return &Cad{basePath}
 }
 
-func (cad *Cad) Write(in []byte, relativeOutPath string) error {
+func (cad *Cad) Write(in []byte, objectType string) (string, error) {
 
-	path := filepath.Join(cad.basePath, relativeOutPath)
+	hash := Hash(in, objectType)
+	path := filepath.Join(cad.basePath, relativePath(hash))
 
 	_, err := os.Stat(path)
 
 	// ignore if the file already exists
 	if !os.IsNotExist(err) {
-		return nil
+		return hash, nil
 	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
-		return err
+		return "", err
 	}
 
-	c, err := compress(in)
+	c, err := compress(withHeader(in, objectType))
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if err := ioutil.WriteFile(path, c, 0644); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return hash, nil
 }
 
 func (cad *Cad) Read(relativePath string) ([]byte, error) {
@@ -55,4 +56,8 @@ func (cad *Cad) Read(relativePath string) ([]byte, error) {
 	u, err := uncompress(compressed)
 
 	return u, err
+}
+
+func relativePath(hash string) string {
+	return filepath.Join(hash[:2], hash[2:])
 }
