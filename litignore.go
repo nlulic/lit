@@ -15,11 +15,11 @@ func (lit *Lit) Ignorefiles() ([]string, error) {
 		return nil, err
 	}
 
-	f, err := os.Open(filepath.Join(r, lit.IgnoreFileName))
+	f, err := os.Open(filepath.Join(r, lit.config.IgnoreFileName))
 
 	if err != nil {
 		if os.IsNotExist(err) {
-			return matches(r, lit.RootDir), nil
+			return matches(r, lit.config.RootDir), nil
 		}
 
 		return nil, err
@@ -28,7 +28,7 @@ func (lit *Lit) Ignorefiles() ([]string, error) {
 	defer f.Close()
 
 	globs := []string{
-		lit.RootDir, //.lit
+		lit.config.RootDir, //.lit
 	}
 
 	s := bufio.NewScanner(f)

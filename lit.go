@@ -7,7 +7,7 @@ import (
 )
 
 type Lit struct {
-	*LitConfig
+	config *LitConfig
 	logger Logger
 }
 
@@ -16,6 +16,7 @@ type LitConfig struct {
 	HeadPath          string
 	IgnoreFileName    string
 	RootDir           string
+	ObjectsDir        string
 }
 
 type Logger interface {
@@ -33,13 +34,14 @@ var (
 func NewLit(logger Logger) *Lit {
 
 	return &Lit{
-		&LitConfig{
+		config: &LitConfig{
 			DefaultBranchName: "master",
 			HeadPath:          "HEAD",
 			IgnoreFileName:    ".litignore",
 			RootDir:           ".lit",
+			ObjectsDir:        "objects",
 		},
-		logger,
+		logger: logger,
 	}
 }
 
@@ -67,7 +69,7 @@ func (lit *Lit) LitDir() (string, error) {
 
 	for {
 		if lit.isInitializedIn(cwd) {
-			return filepath.Join(cwd, lit.RootDir), nil
+			return filepath.Join(cwd, lit.config.RootDir), nil
 		}
 
 		prev := filepath.Dir(cwd)
@@ -81,7 +83,18 @@ func (lit *Lit) LitDir() (string, error) {
 }
 
 func (lit *Lit) isInitializedIn(path string) bool {
-	_, err := os.Stat(filepath.Join(path, lit.RootDir))
+	_, err := os.Stat(filepath.Join(path, lit.config.RootDir))
 
 	return !os.IsNotExist(err)
+}
+
+func (lit *Lit) objectsDir() string {
+
+	litDir, err := lit.LitDir()
+
+	if err != nil {
+		lit.logger.Fatal(err)
+	}
+
+	return filepath.Join(litDir, lit.config.ObjectsDir)
 }

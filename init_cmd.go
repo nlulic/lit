@@ -9,7 +9,7 @@ import (
 
 func (lit *Lit) Init() {
 
-	root, err := filepath.Abs(lit.RootDir)
+	root, err := filepath.Abs(lit.config.RootDir)
 
 	if err != nil {
 		panic(err)
@@ -24,7 +24,7 @@ func (lit *Lit) Init() {
 		panic(err)
 	}
 
-	err = lit.SetRef(lit.DefaultBranchName)
+	err = lit.SetRef(lit.config.DefaultBranchName)
 
 	if err != nil {
 		panic(err)
