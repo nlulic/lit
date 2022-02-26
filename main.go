@@ -23,6 +23,11 @@ func main() {
 	case "commit":
 		// TODO: commit message should come from args
 		lit.Commit("default message")
+	case "branch":
+		// TODO: branch name should come from args
+		lit.Branch("develop")
+	case "log":
+		lit.Log()
 	default:
 		os.Exit(1)
 	}
