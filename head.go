@@ -48,5 +48,22 @@ func (lit *Lit) GetRef() (string, error) {
 
 	ref := string(b)[len(REF_PREFIX)+1:]
 
-	return strings.TrimSpace(ref), nil
+	return filepath.Join(rootDir, strings.TrimSpace(ref)), nil
+}
+
+func (lit *Lit) GetHead() (string, error) {
+
+	ref, err := lit.GetRef()
+
+	if err != nil {
+		return "", err
+	}
+
+	b, err := ioutil.ReadFile(ref)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
