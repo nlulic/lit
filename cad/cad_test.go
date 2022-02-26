@@ -2,6 +2,7 @@ package cad
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -48,13 +49,16 @@ func TestRW(t *testing.T) {
 				t.Error(err)
 			}
 
-			b, err := cad.Read(relativePath(createdHash))
+			value, header, err := cad.Read(createdHash)
 			if err != nil {
 				t.Error(err, Hash([]byte(tt.text), tt.objtype))
 			}
 
-			if !bytes.Equal(tt.want, b) {
-				t.Errorf("want %q; got %q", string(tt.want), string(b))
+			// join header and value for comparison
+			withHeader := append([]byte(fmt.Sprintf("%s\u0000", string(header))), value...)
+
+			if !bytes.Equal(tt.want, withHeader) {
+				t.Errorf("want %q; got %q", string(tt.want), string(withHeader))
 			}
 		})
 	}

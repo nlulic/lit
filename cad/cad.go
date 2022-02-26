@@ -49,18 +49,37 @@ func (cad *Cad) Write(in []byte, objectType string) (string, error) {
 	return hash, nil
 }
 
-func (cad *Cad) Read(relativePath string) ([]byte, error) {
+// Read will fetch a stored object by hash and return the objects header and value
+func (cad *Cad) Read(hash string) ([]byte, []byte, error) {
 
-	path := filepath.Join(cad.basePath, relativePath)
+	path := filepath.Join(cad.basePath, relativePath(hash))
 
 	compressed, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	u, err := uncompress(compressed)
 
-	return u, err
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// separate header from the content
+	var nullByteIndex int
+	var null_byte byte
+
+	for i, b := range u {
+		if b == null_byte {
+			nullByteIndex = i
+			break
+		}
+	}
+
+	header := u[:nullByteIndex]
+	value := u[nullByteIndex+1:]
+
+	return value, header, nil
 }
 
 func relativePath(hash string) string {
