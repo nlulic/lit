@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -16,7 +14,7 @@ func (lit *Lit) Init() {
 	}
 
 	if lit.isInitializedIn(filepath.Dir(root)) {
-		fmt.Printf("Repository already initialized in %s\n", root)
+		lit.logger.Info("Repository already initialized in", root)
 		return
 	}
 
@@ -30,5 +28,5 @@ func (lit *Lit) Init() {
 		panic(err)
 	}
 
-	log.Printf("Initialized empty Lit repository in %s\n", root)
+	lit.logger.Info("Initialized empty Lit repository in", root)
 }

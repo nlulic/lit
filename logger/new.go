@@ -13,7 +13,7 @@ const (
 
 func New(logLevel uint8) *Logger {
 	return &Logger{
-		log.New(log.Writer(), log.Prefix(), log.Flags()),
+		log.New(log.Writer(), log.Prefix(), 0),
 		logLevel,
 	}
 }
