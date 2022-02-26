@@ -60,7 +60,8 @@ func (t Tree) String() string {
 }
 
 func (t *Tree) Hash() string {
-	return cad.Hash([]byte(t.Value()), TreeType)
+	b := []byte(t.Value())
+	return cad.Hash(b, TreeType)
 }
 
 // getName returns the name of the Tree to implement the object interface
