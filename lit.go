@@ -29,6 +29,9 @@ type Logger interface {
 
 var (
 	RepositoryNotInitialized = errors.New("fatal: not a lit repository (or any of the parent directories)")
+	NotValidObjectName       = func(name string) error {
+		return errors.New("fatal: Not a valid object name: " + "'" + name + "'.")
+	}
 )
 
 func NewLit(logger Logger) *Lit {
