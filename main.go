@@ -20,6 +20,9 @@ func main() {
 	switch os.Args[1] {
 	case "init":
 		lit.Init()
+	case "commit":
+		// TODO: commit message should come from args
+		lit.Commit("default message")
 	default:
 		os.Exit(1)
 	}
