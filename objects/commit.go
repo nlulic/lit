@@ -10,7 +10,7 @@ import (
 )
 
 type Commit struct {
-	Tree       *Tree
+	TreeHash   string
 	ParentHash string
 	Message    string
 	Timestamp  time.Time
@@ -23,22 +23,30 @@ type user struct {
 	email    string
 }
 
+func (u *user) Username() string {
+	return u.username
+}
+
+func (u *user) Email() string {
+	return u.email
+}
+
 func NewCommit(msg string, tree *Tree, parentHash string) *Commit {
 	return &Commit{
-		Tree:       tree,
+		TreeHash:   tree.Hash(),
 		ParentHash: parentHash,
 		Message:    msg,
 		Timestamp:  time.Now(),
 		user: &user{
 			username: "anonymous",
-			email:    "anonymous",
+			email:    "anonymous@anonymous",
 		},
 	}
 }
 
 func (c *Commit) Value() (value string) {
 
-	value += fmt.Sprintf("tree %s\n", c.Tree.Hash())
+	value += fmt.Sprintf("tree %s\n", c.TreeHash)
 
 	if c.ParentHash != "" {
 		value += fmt.Sprintf("parent %s\n", c.ParentHash)
@@ -49,6 +57,10 @@ func (c *Commit) Value() (value string) {
 
 	value += "\n" + c.Message
 	return
+}
+
+func (c *Commit) User() *user {
+	return c.user
 }
 
 func (c *Commit) Hash() string {
