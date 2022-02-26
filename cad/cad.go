@@ -2,9 +2,14 @@
 package cad
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+)
+
+var (
+	ObjectAlreadyExists = errors.New("warn: object already exists")
 )
 
 type Cad struct {
@@ -24,7 +29,7 @@ func (cad *Cad) Write(in []byte, objectType string) (string, error) {
 
 	// ignore if the file already exists
 	if !os.IsNotExist(err) {
-		return hash, nil
+		return hash, ObjectAlreadyExists
 	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
