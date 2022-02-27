@@ -48,12 +48,12 @@ func (lit *Lit) Log() {
 
 // mustFetchCommit will fetch the commit from the cad based on the hash or panic
 func mustFetchCommit(hash string, db *cad.Cad) *objects.Commit {
-	value, _, err := db.Read(hash)
+	b, _, err := db.Read(hash)
 	if err != nil {
 		panic(err)
 	}
 
-	commit, err := objects.CommitFromBytes(value)
+	commit, err := objects.CommitFromBytes(b)
 
 	if err != nil {
 		panic(err)
