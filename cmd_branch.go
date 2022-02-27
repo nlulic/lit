@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 )
 
-// TODO: should also be able to pass a commit hash
 func (lit *Lit) Branch(branch string) {
 
 	head, err := lit.GetHead()

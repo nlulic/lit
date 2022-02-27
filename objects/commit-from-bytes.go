@@ -18,9 +18,8 @@ import (
 	default message
 */
 
-// CommitFromBytes creates a commit from bytes. The bytes
-// represent the string value received by the `Value` method
-// TODO: TEST
+// CommitFromBytes creates a `Commit` from bytes. The bytes represent
+// the string value received by the `Value` method of the `Commit`
 func CommitFromBytes(in []byte) (*Commit, error) {
 
 	// lines
@@ -30,8 +29,6 @@ func CommitFromBytes(in []byte) (*Commit, error) {
 		authorKw    = "author"
 		committerKw = "committer"
 	)
-
-	s := bufio.NewScanner(bytes.NewReader(in))
 
 	var (
 		tree      string
@@ -43,6 +40,9 @@ func CommitFromBytes(in []byte) (*Commit, error) {
 	var line int
 	var skippedEmpty bool
 	var message string
+
+	s := bufio.NewScanner(bytes.NewReader(in))
+
 	for s.Scan() {
 		line++
 		txt := s.Text()
