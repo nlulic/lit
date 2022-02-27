@@ -19,20 +19,25 @@ func (lit *Lit) Commit(message string) {
 		lit.logger.Fatal(err)
 	}
 
-	snapshot := lit.Snapshot(r)
-
 	objectsDir := lit.objectsDir()
 	db := cad.New(objectsDir)
+
+	var headSnapshot Tree
+
+	// initialize the HEAD snapshot only if a head exists (has commits)
+	if head, err := lit.GetHead(); err == nil {
+		headSnapshot = snapshotHead(head, r, db)
+	}
+
+	workingTree := lit.Snapshot(r)
 
 	// used later for STDOUT
 	var createdBlobs []Blob
 
 	// write all the trees and files to the objects storage
-	for _, tree := range trees(snapshot) {
-		_, exists := mustCreate(db, []byte(tree.Value()), TreeType, tree.Hash())
-		if !exists {
-			lit.logger.Debug(fmt.Sprintf("created %s object %s", TreeType, tree.Hash()))
-		}
+	for _, tree := range trees(workingTree) {
+		mustCreate(db, []byte(tree.Value()), TreeType, tree.Hash())
+		lit.logger.Debug(fmt.Sprintf("created %s object %s", TreeType, tree.Hash()))
 
 		for _, blob := range tree.Blobs {
 			b, err := ioutil.ReadFile(blob.Path)
@@ -40,11 +45,9 @@ func (lit *Lit) Commit(message string) {
 				panic(err)
 			}
 
-			_, exists := mustCreate(db, b, BlobType, blob.Hash)
-			if !exists {
-				createdBlobs = append(createdBlobs, blob)
-				lit.logger.Debug(fmt.Sprintf("created %s object %s", BlobType, blob.Hash))
-			}
+			mustCreate(db, b, BlobType, blob.Hash)
+			createdBlobs = append(createdBlobs, blob)
+			lit.logger.Debug(fmt.Sprintf("created %s object %s", BlobType, blob.Hash))
 		}
 	}
 
@@ -54,9 +57,8 @@ func (lit *Lit) Commit(message string) {
 	}
 
 	// exit if no objects have been added to the cad
-	if len(createdBlobs) == 0 {
-		lit.logger.Info("On branch", filepath.Base(ref))
-		lit.logger.Info("nothing to commit, working tree clean")
+	if headSnapshot.Hash() == workingTree.Hash() {
+		lit.logger.Info("On branch '" + filepath.Base(ref) + "' nothing to commit, working tree clean")
 		return
 	}
 
@@ -70,7 +72,7 @@ func (lit *Lit) Commit(message string) {
 		}
 	}
 
-	commit := NewCommit(message, &snapshot, head)
+	commit := NewCommit(message, &workingTree, head)
 	hash, _ := mustCreate(db, []byte(commit.Value()), CommitType, commit.Hash())
 	lit.logger.Debug(fmt.Sprintf("created %s object %s", CommitType, commit.Hash()))
 
@@ -86,7 +88,6 @@ func (lit *Lit) Commit(message string) {
 
 // tree traverses a base tree and returns the base and all of its subtrees
 func trees(tree Tree) (trees []Tree) {
-
 	if tree.IsEmpty() {
 		return nil
 	}
@@ -101,14 +102,12 @@ func trees(tree Tree) (trees []Tree) {
 			stack.Push(t)
 		}
 	}
-
 	return
 }
 
 // mustCreate creates object to the cad. If any errors occur or the snpashot hash
 // doesn't match the created hashed object it panics
 func mustCreate(db *cad.Cad, b []byte, objectType string, snapshotHash string) (hash string, exists bool) {
-
 	hash, err := db.Write(b, objectType)
 
 	if err != nil {
@@ -128,7 +127,6 @@ func mustCreate(db *cad.Cad, b []byte, objectType string, snapshotHash string) (
 }
 
 func mustWriteToFile(path, value string) {
-
 	if err := os.MkdirAll(filepath.Dir(path), 0664); err != nil {
 		panic(err)
 	}

@@ -91,3 +91,37 @@ func contains(s []string, str string) bool {
 
 	return false
 }
+
+// snapshotHead recreates the folder structure for the current head
+func snapshotHead(head, basePath string, db *cad.Cad) Tree {
+	commit := mustFetchCommit(head, db)
+	return mustFetchTree(commit.TreeHash, basePath, db)
+}
+
+func mustFetchTree(hash, basePath string, db *cad.Cad) Tree {
+	b, _, err := db.Read(hash)
+	if err != nil {
+		panic(err)
+	}
+
+	tree, err := TreeFromBytes(
+		b,
+		basePath,
+		func(db *cad.Cad) func(hash string) []byte {
+			return func(hash string) []byte {
+				b, _, err := db.Read(hash)
+				if err != nil {
+					panic(err)
+				}
+
+				return b
+			}
+		}(db),
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return *tree
+}
