@@ -9,29 +9,37 @@ import (
 
 func main() {
 
+	commitCmd := flag.NewFlagSet("commit", flag.ExitOnError)
+	commitMsg := commitCmd.String("m", "", "commit message")
+
+	branchCmd := flag.NewFlagSet("branch", flag.ExitOnError)
+
+	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
+
 	lit := NewLit(
 		logger.New(logger.LevelDebug),
 	)
 
 	if len(os.Args) < 2 {
+		lit.logger.Fatal("fatal: subcommand expected")
 		os.Exit(1)
 	}
-
-	flag.Parse()
 
 	switch os.Args[1] {
 	case "init":
 		lit.Init()
 	case "commit":
-		lit.Commit(flag.Arg(1))
+		commitCmd.Parse(os.Args[2:])
+		lit.Commit(*commitMsg)
 	case "branch":
-		lit.Branch(flag.Arg(1))
+		branchCmd.Parse(os.Args[2:])
+		lit.Branch(branchCmd.Arg(0))
 	case "checkout":
-		lit.Checkout(flag.Arg(1))
+		checkoutCmd.Parse(os.Args[2:])
+		lit.Checkout(checkoutCmd.Arg(0))
 	case "log":
 		lit.Log()
 	default:
 		os.Exit(1)
 	}
-
 }
