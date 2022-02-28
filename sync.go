@@ -10,8 +10,6 @@ import (
 // Sync applies the snapshot to the working directory
 func (lit *Lit) Sync(snapshot, workingTree Tree) error {
 
-	debug := false
-
 	if snapshot.Hash() == workingTree.Hash() {
 		lit.logger.Debug("nothing changed in", snapshot.Name)
 		return nil
@@ -34,25 +32,19 @@ func (lit *Lit) Sync(snapshot, workingTree Tree) error {
 
 			// update
 			lit.logger.Debug(blob.Name, "changed. Updating...")
-			if !debug {
-				mustCreateFile(blob, db)
-			}
+			mustCreateFile(blob, db)
 			continue
 		}
 
 		// doesn't exist in the working directory
 		lit.logger.Debug(blob.Name, "doesn't exist anymore. Creating...")
-		if !debug {
-			mustCreateFile(blob, db)
-		}
+		mustCreateFile(blob, db)
 	}
 
 	// leftover blobs that do not exist in the HEAD snapshot will be deleted
 	for _, blob := range baseBlobs {
 		lit.logger.Debug(blob.Name, "has been removed. Deleting...")
-		if !debug {
-			mustDeleteFile(blob)
-		}
+		mustDeleteFile(blob)
 	}
 
 	// synchronize trees
@@ -81,9 +73,7 @@ func (lit *Lit) Sync(snapshot, workingTree Tree) error {
 	// leftover trees that do not exist in the HEAD snapshot will be deleted
 	for _, tree := range baseTrees {
 		lit.logger.Debug(tree.Name, "has been removed. Deleting...")
-		if !debug {
-			mustDeleteDir(tree)
-		}
+		mustDeleteDir(tree)
 	}
 
 	return nil
