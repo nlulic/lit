@@ -17,7 +17,7 @@ func main() {
 	checkoutCmd := flag.NewFlagSet("checkout", flag.ExitOnError)
 
 	lit := NewLit(
-		logger.New(logger.LevelDebug),
+		logger.New(logger.LevelInfo),
 	)
 
 	if len(os.Args) < 2 {
