@@ -32,7 +32,7 @@ func (cad *Cad) Write(in []byte, objectType string) (string, error) {
 		return hash, ObjectAlreadyExists
 	}
 
-	if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
 		return "", err
 	}
 
@@ -42,7 +42,7 @@ func (cad *Cad) Write(in []byte, objectType string) (string, error) {
 		return "", err
 	}
 
-	if err := ioutil.WriteFile(path, c, 0644); err != nil {
+	if err := ioutil.WriteFile(path, c, 0664); err != nil {
 		return "", err
 	}
 

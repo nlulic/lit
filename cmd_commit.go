@@ -127,11 +127,11 @@ func mustCreate(db *cad.Cad, b []byte, objectType string, snapshotHash string) (
 }
 
 func mustWriteToFile(path, value string) {
-	if err := os.MkdirAll(filepath.Dir(path), 0664); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
 		panic(err)
 	}
 
-	if err := ioutil.WriteFile(path, []byte(value), 0664); err != nil {
+	if err := ioutil.WriteFile(path, []byte(value), 0777); err != nil {
 		panic(err)
 	}
 }

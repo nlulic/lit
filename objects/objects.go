@@ -14,6 +14,6 @@ const (
 )
 
 const (
-	permsBlob = "100644"
+	permsBlob = "100664"
 	permsTree = "040000"
 )

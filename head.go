@@ -22,7 +22,7 @@ func (lit *Lit) SetRef(ref string) error {
 	err = ioutil.WriteFile(
 		filepath.Join(rootDir, lit.config.HeadPath),
 		[]byte(fmt.Sprintf("%s refs/heads/%s\n", REF_PREFIX, ref)),
-		0644,
+		0664,
 	)
 
 	return err

@@ -18,7 +18,7 @@ func (lit *Lit) Init() {
 		return
 	}
 
-	if err := os.MkdirAll(root, 0644); err != nil {
+	if err := os.MkdirAll(root, 0777); err != nil {
 		panic(err)
 	}
 

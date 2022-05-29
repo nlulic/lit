@@ -8,10 +8,10 @@ import (
 )
 
 /*
-100644 blob 6194df4de654f46c609780a00bfe9a501b020d7e    .litignore
+100664blob 6194df4de654f46c609780a00bfe9a501b020d7e    .litignore
 040000 tree 694f0f2fb5db3e2b2815bbdd16562198060d0e4e    cad
-100644 blob f2f2ec4d073b0e08211aa09e86e185e4e1cc6204    cmd_branch.go
-100644 blob 2ef8c8f26452717b58a666ae3b5030ae4037a39b    cmd_checkout.go
+100664 blob f2f2ec4d073b0e08211aa09e86e185e4e1cc6204    cmd_branch.go
+100664 blob 2ef8c8f26452717b58a666ae3b5030ae4037a39b    cmd_checkout.go
 040000 tree 62e7cb1246b1ccd2d843f07dc9b0b581b1a0ad74    logger
 040000 tree f9bfc3df0a802d7443e65d87b3c370aa826ef3ed    util
 */
